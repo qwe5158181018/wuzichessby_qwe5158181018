@@ -1,0 +1,146 @@
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title>五子棋</title>
+	<style>
+	#keyboard {border-spacing:0; 
+		border-style : solid ;
+		border-width : 3px;border-color : black ;
+		display : flex;
+		flex-wrap:wrap ;
+		justify-content : center ; 
+		width: 480 ;
+		flex-direction:column ;
+		align-items:center }
+	#countain {flex-wrap:wrap ;
+		justify-content:space-between ;
+		display:flex ;
+		flex-direction:column;
+		height:100%}
+	#row1{display:flex ;
+		justify-content: space-around;}
+	#row2{display:flex;
+		justify-content:center}
+	button { height:1.5em ; width:9em ; text-align:center ;margin :20px}
+	#turn { height:50}
+	#ww{position : absolute;width : 100%;height:100%}
+	#bw{position : absolute;width : 100%;height:100%}
+	</style>
+	<script>
+		let keyboard = new Array(361);
+		let _turn = 1;
+		function init(){							//初始化
+				keyboard.fill(0);
+				document.getElementById("bw").onclick = function(){reset()};
+				document.getElementById("ww").onclick = function(){reset()};
+				let kb = document.getElementById("keyboard");
+				for(let i = 0; i<19;i++){
+					let _tr = document.createElement("tr");
+					for(let j = 0;j<19;j++){
+						let _td = document.createElement("td");
+						let _img = document.createElement("img");
+						let _id = i*19+j;
+						_td.style.padding = "0";
+						_img.src = "00.jpg"
+						_img.id = _id.toString();
+						_img.width = "25";
+						_img.height = "25";
+						_img.onclick = function(){beclicked(this)};
+						_img.onmouseover = function(){bemouseover(this)};
+						_img.onmouseout = function(){bemouseout(this)};
+						_img.className = "chess";
+						_td.appendChild(_img);
+						_tr.appendChild(_td);}
+					kb.appendChild(_tr);}
+				reset();}
+				
+		function reset(){															//重设
+			
+			document.getElementById("bw").style.display = "none"
+			
+			document.getElementById("ww").style.display = "none"
+			keyboard.fill(0);
+			let chesses = document.getElementsByClassName("chess");
+			for(let i of chesses){
+				i.src = "00.jpg";}
+			_turn = 1;
+			keyboard.fill(0);}
+			
+		function bemouseover(e){										//鼠标位于时
+			let i = e.id;
+			if(keyboard[i]==0){
+				e.src = "04.jpg"}}
+				
+		function bemouseout(e){
+			let i = e.id;
+			if(keyboard[i]==0){
+				e.src = "00.jpg"}}
+				
+		function beclicked(e){					//点击
+			let i = e.id;
+			if(keyboard[i]==0){
+				if(_turn % 2 == 1){		//黑
+					e.src = "01.jpg";
+					document.getElementById("turn").src = "02.jpg";
+					_turn += 1;
+					keyboard[i] = 1;}
+				else{					//白
+					e.src = "02.jpg";
+					document.getElementById("turn").src = "01.jpg";
+					_turn += 1;
+					keyboard[i] = 2;}}
+			_win=justice();
+			show(_win);}
+			
+		function justice(){												//胜负判断
+		for(let i = 0;i<19;i++){
+			for(let j = 0;j<16;j++){		//横纵
+				let t = i*19+j;
+				if(keyboard[t]!=0){									//横向五连
+					let s = new Set([keyboard[t],keyboard[t+1],keyboard[t+2],keyboard[t+3],keyboard[t+4]]);
+					if(s.size == 1){
+						_win = keyboard[t];
+						return _win;}}
+				t = j*19+i;
+				if(keyboard[t]!=0){									//纵向五连
+					s = new Set([keyboard[t],keyboard[t+19],keyboard[t+38],keyboard[t+57],keyboard[t+76]]);
+					if(s.size == 1){
+						_win = keyboard[t];
+						return _win;}}}
+		}
+		for(let i = 0;i<16;i++){					//斜向
+			for(let j = 0;j<16;j++){
+				t = i*19+j;
+				if(keyboard[t]!=0){		//向右下斜
+					s = new Set([keyboard[t],keyboard[t+20],keyboard[t+40],keyboard[t+60],keyboard[t+80]]);
+					if(s.size == 1){
+						_win = keyboard[t];
+						return _win;
+				t = i*19+j+4;
+				if(keyboard[t]!=0){			//向左下斜
+					s = new Set([keyboard[t],keyboard[t+18],keyboard[t+36],keyboard[t+54],keyboard[t+72]]);
+					if(s.size == 1){
+						_win = keyboard[t];
+						return _win;}}}}}}}
+		function show(w){
+			if(w==1){
+				
+				document.getElementById("bw").style.display = "block"}
+			if(w==2){
+				
+				document.getElementById("ww").style.display = "block"}}
+	</script>
+</head>
+<body onload = "init()">
+	<img id = "ww" src = "ww.jpg"><img id = "bw" src = "bw.jpg">
+	<div id = "countain">
+	<div id = "row1">
+		<button onclick = "reset()" >New game</button><img id = "turn" src = "01.jpg" width = "50">
+	</div>
+	<div id = "row2">
+		<table id = "keyboard">	
+		</table>
+	</div>
+	</div>
+</body>
+</html>
